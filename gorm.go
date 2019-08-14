@@ -1,12 +1,12 @@
 package mts
 
 import (
-	"fmt"
 	"strings"
 )
 
-func iterateRaw(data map[string]interface{}, temp *string) []string {
+func iterate(data map[string]interface{}, temp *string) ([]string, *[]interface{}) {
 	var queryItems []string
+	var params []interface{}
 	for k, v := range data {
 		op := generateOperator(k)
 		if op != nil {
@@ -17,19 +17,15 @@ func iterateRaw(data map[string]interface{}, temp *string) []string {
 				queryItems = append(queryItems, *condition)
 			}
 		} else {
-			switch v.(type) {
-			case string:
-				queryItems = append(queryItems, k+" = '"+v.(string) + "'")
-			default:
-				queryItems = append(queryItems, k+" = "+fmt.Sprintf("%v", v))
-			}
+			queryItems = append(queryItems, k+" = ?")
 		}
+		params = append(params, v)
 	}
-	return queryItems
+	return queryItems, &params
 }
 
-func ParseRaw(query interface{}) interface{} {
-	parts := iterateRaw(query.(map[string]interface{}), nil)
+func Parse(query interface{}) (interface{}, *[]interface{}) {
+	parts, params := iterate(query.(map[string]interface{}), nil)
 	result := "(" + strings.Join(parts, ") AND (") + ")"
-	return result
+	return result, params
 }
