@@ -4,17 +4,6 @@ import (
 	"strings"
 )
 
-func generateCondition(op, key string, value interface{}) *string {
-	c, exists := conditions[op]
-	if exists {
-		query := key
-		query += c
-		query += "?"
-		return &query
-	}
-	return nil
-}
-
 func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}) {
 	var queryItems []string
 	var params []interface{}
