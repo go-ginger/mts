@@ -1,10 +1,5 @@
 package mts
 
-//type void struct{}
-//var member void
-var operators map[string]string
-var conditions map[string]string
-
 func init() {
 	operators = map[string]string{
 		"$and": " AND ",
@@ -17,13 +12,4 @@ func init() {
 		"$gte": " >= ",
 		"$ne":  " <> ",
 	}
-}
-
-func generateOperator(op string) *string {
-	c, exists := operators[op]
-	if exists {
-		query := c
-		return &query
-	}
-	return nil
 }

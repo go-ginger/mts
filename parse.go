@@ -1,6 +1,7 @@
 package mts
 
 import (
+	"github.com/kulichak/models"
 	"strings"
 )
 
@@ -12,7 +13,7 @@ func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}
 		if op != nil {
 			queryItems = append(queryItems, *op)
 		} else if temp != nil {
-			condition := generateRawCondition(k, *temp, v)
+			condition := generateCondition(k, *temp, v)
 			if condition != nil {
 				queryItems = append(queryItems, *condition)
 			}
@@ -29,7 +30,7 @@ func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}
 }
 
 func Parse(query interface{}) (interface{}, []interface{}) {
-	parts, params := iterate(query.(map[string]interface{}), nil)
+	parts, params := iterate(query.(models.Filters), nil)
 	result := "(" + strings.Join(parts, ") AND (") + ")"
 	return result, params
 }
