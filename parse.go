@@ -11,19 +11,33 @@ func iterate(data models.Filters, temp *string) ([]string, []interface{}) {
 	for k, v := range data {
 		op := generateOperator(k)
 		if op != nil {
-			queryItems = append(queryItems, *op)
-		} else if temp != nil {
-			condition := generateCondition(k, *temp, v)
-			if condition != nil {
-				queryItems = append(queryItems, *condition)
+			d2, success := v.([]interface{})
+			if success {
+				var opQueryItems []string
+				for _, d := range d2 {
+					d3, success := d.(map[string]interface{})
+					if success {
+						q, p := iterate(d3, &k)
+						params = append(params, p...)
+						opQueryItems = append(opQueryItems, q...)
+					}
+				}
+				query := "(" + strings.Join(opQueryItems, ") "+*op+" (") + ")"
+				queryItems = append(queryItems, query)
 			}
-		}
-		d2, success := v.(map[string]interface{})
-		if success {
-			iterate(d2, &k)
+			//queryItems = append(queryItems, *op)
 		} else {
-			queryItems = append(queryItems, k+"=?")
-			params = append(params, v)
+			var condition *string
+			if temp != nil {
+				condition = generateCondition(k, *temp, v)
+				if condition != nil {
+					queryItems = append(queryItems, *condition)
+				}
+			}
+			if condition == nil {
+				queryItems = append(queryItems, k+"=?")
+				params = append(params, v)
+			}
 		}
 	}
 	return queryItems, params
