@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}) {
+func iterate(data models.Filters, temp *string) ([]string, []interface{}) {
 	var queryItems []string
 	var params []interface{}
 	for k, v := range data {
