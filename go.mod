@@ -4,5 +4,5 @@ go 1.12
 
 require (
 	github.com/gin-gonic/gin v1.4.0 // indirect
-	github.com/kulichak/models v0.0.0-20190815104841-46cee7c45041
+	github.com/kulichak/models v1.0.1
 )
