@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func iterate(data models.Filters, temp *string) ([]string, []interface{}) {
+func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}) {
 	var queryItems []string
 	var params []interface{}
 	for k, v := range data {
@@ -17,7 +17,7 @@ func iterate(data models.Filters, temp *string) ([]string, []interface{}) {
 				for _, d := range d2 {
 					d3, success := d.(map[string]interface{})
 					if success {
-						q, p := iterate(d3, &k)
+						q, p := iterate(d3, nil)
 						params = append(params, p...)
 						opQueryItems = append(opQueryItems, q...)
 					}
@@ -29,14 +29,21 @@ func iterate(data models.Filters, temp *string) ([]string, []interface{}) {
 		} else {
 			var condition *string
 			if temp != nil {
-				condition = generateCondition(k, *temp, v)
+				condition = generateCondition(k, *temp, nil)
 				if condition != nil {
 					queryItems = append(queryItems, *condition)
+					params = append(params, v)
 				}
 			}
 			if condition == nil {
-				queryItems = append(queryItems, k+"=?")
-				params = append(params, v)
+				if iv, ok := v.(map[string]interface{}); ok {
+					q, p := iterate(iv, &k)
+					params = append(params, p...)
+					queryItems = append(queryItems, q...)
+				} else {
+					queryItems = append(queryItems, k+"=?")
+					params = append(params, v)
+				}
 			}
 		}
 	}
