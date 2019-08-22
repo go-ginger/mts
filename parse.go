@@ -47,6 +47,7 @@ func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}
 			}
 		}
 	}
+	queryItems = []string{"(" + strings.Join(queryItems, ") AND (") + ")"}
 	return queryItems, params
 }
 
