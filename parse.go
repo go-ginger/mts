@@ -40,6 +40,11 @@ func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}
 					q, p := iterate(iv, &k)
 					params = append(params, p...)
 					queryItems = append(queryItems, q...)
+				} else if iv, ok := v.(models.Filters); ok {
+					q, p := iterate(iv, &k)
+					params = append(params, p...)
+					queryItems = append(queryItems, q...)
+
 				} else {
 					queryItems = append(queryItems, k+"=?")
 					params = append(params, v)
