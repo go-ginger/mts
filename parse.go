@@ -1,7 +1,7 @@
 package mts
 
 import (
-	"github.com/kulichak/models"
+	"github.com/go-ginger/models"
 	"strings"
 )
 
