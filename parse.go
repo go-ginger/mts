@@ -51,7 +51,10 @@ func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}
 					queryItems = append(queryItems, q...)
 
 				} else {
-					if v != nil {
+					if b, ok := v.(bool); ok {
+						queryItems = append(queryItems, k+" IS ?")
+						params = append(params, b)
+					} else if v != nil {
 						queryItems = append(queryItems, k+"=?")
 						params = append(params, v)
 					} else {
