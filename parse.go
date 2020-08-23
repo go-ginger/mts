@@ -29,10 +29,13 @@ func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}
 		} else {
 			var condition *string
 			if temp != nil {
-				condition = generateCondition(k, *temp, nil)
+				var handleValue bool
+				condition, handleValue = generateCondition(k, *temp, v)
 				if condition != nil {
 					queryItems = append(queryItems, *condition)
-					params = append(params, v)
+					if handleValue {
+						params = append(params, v)
+					}
 				}
 			}
 			if condition == nil {
