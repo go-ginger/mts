@@ -7,6 +7,7 @@ import "fmt"
 
 var conditions map[string]string
 var boolConditions map[string]string
+var nullValueConditions map[string]string
 
 func init() {
 	operators = map[string]string{
@@ -23,6 +24,9 @@ func init() {
 	boolConditions = map[string]string{
 		"$ne": " IS NOT ",
 	}
+	nullValueConditions = map[string]string{
+		"$ne": " IS NOT ",
+	}
 }
 
 func generateCondition(op, key string, value interface{}) (cond *string, handleValue bool) {
@@ -35,11 +39,20 @@ func generateCondition(op, key string, value interface{}) (cond *string, handleV
 			return &query, false
 		}
 	}
-	c, exists := conditions[op]
-	if exists {
-		query := key
-		query += c + "?"
-		return &query, true
+	if value == nil {
+		c, exists := nullValueConditions[op]
+		if exists {
+			query := key
+			query += c + "NULL"
+			return &query, false
+		}
+	} else {
+		c, exists := conditions[op]
+		if exists {
+			query := key
+			query += c + "?"
+			return &query, true
+		}
 	}
 	return nil, false
 }
