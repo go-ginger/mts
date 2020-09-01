@@ -77,7 +77,13 @@ func iterate(data map[string]interface{}, temp *string) ([]string, []interface{}
 }
 
 func Parse(query interface{}) (interface{}, []interface{}) {
-	parts, params := iterate(query.(models.Filters), nil)
+	var filters models.Filters
+	if f, ok := query.(models.Filters); ok {
+		filters = f
+	} else if f, ok := query.(*models.Filters); ok {
+		filters = *f
+	}
+	parts, params := iterate(filters, nil)
 	var result string
 	if parts != nil {
 		result = "(" + strings.Join(parts, ") AND (") + ")"
